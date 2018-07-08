@@ -1,6 +1,0 @@
-hash: 12ed576792f3ebfa249661505de0159e1b16d698fe8369f58ffa049d92a3b376
-updated: 2018-07-07T22:19:07.695062066-07:00
-imports:
-- name: github.com/ethereum/go-ethereum
-  version: 198ef97108ec257d49a7b593a9c6fe49961319c0
-testImports: []
