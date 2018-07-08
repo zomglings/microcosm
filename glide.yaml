@@ -1,0 +1,4 @@
+package: github.com/nkashy1/microcosm
+import:
+- package: github.com/ethereum/go-ethereum
+  version: ~2.0.0
