@@ -19,7 +19,7 @@ import (
 func main() {
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage: %s <subcommand> [arguments]\n", os.Args[0])
-		fmt.Fprintln(os.Stderr, "Subcommands: accounts, addresses, datadir, genesis")
+		fmt.Fprintln(os.Stderr, "Subcommands: accounts, addresses, genesis")
 		fmt.Fprintln(os.Stderr, "For information on any <subcommand>:")
 		fmt.Fprintf(os.Stderr, "\t%s <subcommand> -h\n", os.Args[0])
 		flag.PrintDefaults()
@@ -49,7 +49,7 @@ func main() {
 
 	genesisFlags := flag.NewFlagSet("genesis", flag.ExitOnError)
 	genesisFlags.Usage = func() {
-		fmt.Fprintf(os.Stderr, "Usage: %s genesis -genesisFile <output path> -chainID <chain id> -difficulty <difficulty> -balance <balance> -gasLimit <gas limit> [addresses...]\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "Usage: %s, genesis -genesisFile <output path> -chainID <chain id> -difficulty <difficulty> -balance <balance> -gasLimit <gas limit> [addresses...]\n", os.Args[0])
 		genesisFlags.PrintDefaults()
 	}
 	genesisFlags.StringVar(&genesisFile, "genesisFile", "genesis.json", "Path at which to output genesis JSON file")
@@ -57,12 +57,6 @@ func main() {
 	genesisFlags.Int64Var(&difficulty, "difficulty", 100, "Chain difficulty")
 	genesisFlags.Int64Var(&balance, "balance", 10000000000, "Balance that each of the specified accounts should start with")
 	genesisFlags.Uint64Var(&gasLimit, "gasLimit", 10000000, "Gas limit for private net")
-
-	datadirFlags := flag.NewFlagSet("defaultDataDir", flag.ExitOnError)
-	datadirFlags.Usage = func() {
-		fmt.Fprintf(os.Stderr, "Usage: %s datadir\n", os.Args[0])
-		fmt.Fprintln(os.Stderr, "Prints the default geth data directory to stdout")
-	}
 
 	subcommand := flag.Arg(0)
 	subcommandArgs := flag.Args()[1:]
@@ -133,8 +127,6 @@ func main() {
 		}
 
 		ioutil.WriteFile(genesisFile, genesisBlockJSON, 0644)
-	case "datadir":
-		datadirFlags.Parse(subcommandArgs)
 	default:
 		fmt.Fprintf(os.Stderr, "Invalid subcommand: %s\n", subcommand)
 		flag.Usage()
