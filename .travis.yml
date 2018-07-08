@@ -1,0 +1,14 @@
+dist: trusty
+sudo: required
+language: go
+go:
+  - "1.10.x"
+services:
+  - docker
+env:
+  global:
+    - DOCKER_IMAGE="fuzzyfrog/microcosm"
+script:
+  - docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
+  - docker build -t ${DOCKER_IMAGE}:${TRAVIS_COMMIT} -f docker/Dockerfile .
+  - docker push ${DOCKER_IMAGE}
