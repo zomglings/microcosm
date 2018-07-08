@@ -56,3 +56,12 @@ func TestCreateAccount1(t *testing.T) {
 		t.Fatalf("Incorrect address in keyfile -- expected: %s, actual: %s", expectedStoredAddressLower, prefixedStoredAddressLower)
 	}
 }
+
+func TestCreateAccount2(t *testing.T) {
+	keydir := "./if-you-create-a-subdirectory-with-this-name-you-are-a-jerk"
+	password := "lol"
+	_, err := CreateKey(keydir, password)
+	if err == nil {
+		t.Fatalf("CreateKey call with non-existent directory did not raise an error -- expected: nil, actual: %v", err)
+	}
+}
