@@ -46,20 +46,18 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println("Created keyfiles for the following accounts:")
-		for i, address := range addresses {
-			fmt.Printf("\t%d. %s\n", i+1, address.String())
+		for _, address := range addresses {
+			fmt.Printf("%s\n", address.String())
 		}
 	case "addresses":
 		getAddressesFlags.Parse(flag.Args()[1:])
 		keyFiles := getAddressesFlags.Args()
-		fmt.Println("Addresses (by key file):")
 		for _, keyFile := range keyFiles {
 			address, err := accounts.GetAddress(keyFile)
 			if err != nil {
 				log.Fatal(err)
 			}
-			fmt.Printf("\t- %s (file: %s)\n", address.String(), keyFile)
+			fmt.Printf("%s\n", address.String())
 		}
 	default:
 		fmt.Fprintf(os.Stderr, "Invalid subcommand: %s\n", subcommand)
