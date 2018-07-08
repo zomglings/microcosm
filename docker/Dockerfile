@@ -1,11 +1,13 @@
-FROM golang:1.10.3-alpine3.7 as go-ethereum-build
-
-ARG REPO_URL="https://github.com/ethereum/go-ethereum.git"
-ARG CHECKOUT_TARGET="master"
+FROM golang:1.10.3-alpine3.7 as golang-base
 
 RUN apk update && \
     apk upgrade && \
     apk add --no-cache gcc git linux-headers make musl-dev
+
+FROM golang-base as go-ethereum-build
+
+ARG REPO_URL="https://github.com/ethereum/go-ethereum.git"
+ARG CHECKOUT_TARGET="master"
 
 RUN git clone ${REPO_URL} "/go/src/github.com/ethereum/go-ethereum"
 
@@ -15,6 +17,14 @@ RUN git checkout ${CHECKOUT_TARGET}
 
 RUN make all
 
+FROM golang-base as microcosm-build
+
+WORKDIR "/go/src/github.com/nkashy1/microcosm"
+
+COPY . .
+
+RUN go build
+
 FROM alpine:3.7 as main
 
 RUN apk add --no-cache ca-certificates
@@ -22,3 +32,5 @@ RUN apk add --no-cache ca-certificates
 WORKDIR /root
 
 COPY --from=go-ethereum-build "/go/src/github.com/ethereum/go-ethereum/build/bin/" /usr/local/bin/
+
+COPY --from=microcosm-build "/go/src/github.com/nkashy1/microcosm/microcosm" /usr/local/bin/
