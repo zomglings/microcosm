@@ -127,3 +127,39 @@ func TestCreateKeys3(t *testing.T) {
 		}
 	}
 }
+
+// Tests that GetAddress correctly extracts address from keyfile
+func TestGetAddress1(t *testing.T) {
+	tempDir, err := ioutil.TempDir("", "microcosm")
+	if err != nil {
+		t.Fatal("Unable to create temporary directory")
+	}
+
+	defer os.RemoveAll(tempDir)
+
+	password := "lol"
+	addresses, err := CreateKeys(tempDir, password, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expectedAddress := addresses[0]
+
+	tempDirContents, err := ioutil.ReadDir(tempDir)
+	if err != nil {
+		t.Fatalf("Unable to list files in temporary directory: %s", tempDir)
+	}
+
+	if len(tempDirContents) != 1 {
+		t.Fatalf("Incorrect number of files in temporary directory -- expected: %d, actual: %d", 1, len(tempDirContents))
+	}
+
+	keyFileInfo := tempDirContents[0]
+	keyFile := path.Join(tempDir, keyFileInfo.Name())
+	extractedAddress, err := GetAddress(keyFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if extractedAddress != expectedAddress {
+		t.Fatalf("Incorrect address extracted from keyfile %s -- expected: %s, actual: %s", keyFile, expectedAddress.String(), extractedAddress.String())
+	}
+}
