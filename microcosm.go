@@ -12,7 +12,7 @@ import (
 func main() {
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage: %s <subcommand> [arguments]\n", os.Args[0])
-		fmt.Fprintln(os.Stderr, "Subcommands: accounts")
+		fmt.Fprintln(os.Stderr, "Subcommands: accounts, addresses")
 		fmt.Fprintln(os.Stderr, "For information on any <subcommand>:")
 		fmt.Fprintf(os.Stderr, "\t%s <subcommand> -h\n", os.Args[0])
 		flag.PrintDefaults()
@@ -27,10 +27,16 @@ func main() {
 	var keystore, password string
 	var numAccounts uint
 
-	createAccountFlags := flag.NewFlagSet("account", flag.ExitOnError)
+	createAccountFlags := flag.NewFlagSet("accounts", flag.ExitOnError)
 	createAccountFlags.StringVar(&keystore, "keystore", "./", "Directory in which to store key file")
 	createAccountFlags.StringVar(&password, "password", "microcosm", "Password with which to encrypt the key")
 	createAccountFlags.UintVar(&numAccounts, "numAccounts", 1, "Number of accounts to create")
+
+	getAddressesFlags := flag.NewFlagSet("addresses", flag.ExitOnError)
+	getAddressesFlags.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Usage: %s addresses [keyfiles...]\n", os.Args[0])
+		getAddressesFlags.PrintDefaults()
+	}
 
 	subcommand := flag.Arg(0)
 	switch subcommand {
@@ -40,9 +46,18 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println("Created keyfiles for the following accounts:")
-		for i, address := range addresses {
-			fmt.Printf("\t%d. %s\n", i+1, address.String())
+		for _, address := range addresses {
+			fmt.Printf("%s\n", address.String())
+		}
+	case "addresses":
+		getAddressesFlags.Parse(flag.Args()[1:])
+		keyFiles := getAddressesFlags.Args()
+		for _, keyFile := range keyFiles {
+			address, err := accounts.GetAddress(keyFile)
+			if err != nil {
+				log.Fatal(err)
+			}
+			fmt.Printf("%s\n", address.String())
 		}
 	default:
 		fmt.Fprintf(os.Stderr, "Invalid subcommand: %s\n", subcommand)
