@@ -10,6 +10,7 @@ import (
 	"testing"
 )
 
+// Tests that CreateAccount creates a JSON keyfile of the correct format when passed valid arguments
 func TestCreateAccount1(t *testing.T) {
 	tempDir, err := ioutil.TempDir("", "microcosm")
 	if err != nil {
@@ -57,6 +58,7 @@ func TestCreateAccount1(t *testing.T) {
 	}
 }
 
+// Tests that CreateAccount returns an error when passed a non-existent directory as an argument
 func TestCreateAccount2(t *testing.T) {
 	keydir := "./if-you-create-a-subdirectory-with-this-name-you-are-a-jerk"
 	password := "lol"
