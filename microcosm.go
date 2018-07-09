@@ -55,7 +55,7 @@ func main() {
 	genesisFlags.StringVar(&genesisFile, "genesisFile", "genesis.json", "Path at which to output genesis JSON file")
 	genesisFlags.Int64Var(&chainID, "chainID", 7001337, "Chain ID for private net")
 	genesisFlags.Int64Var(&difficulty, "difficulty", 100, "Chain difficulty")
-	genesisFlags.Int64Var(&balance, "balance", 10000000000, "Balance that each of the specified accounts should start with")
+	genesisFlags.Int64Var(&balance, "balance", 1000000000000000000, "Balance that each of the specified accounts should start with")
 	genesisFlags.Uint64Var(&gasLimit, "gasLimit", 10000000, "Gas limit for private net")
 
 	subcommand := flag.Arg(0)
