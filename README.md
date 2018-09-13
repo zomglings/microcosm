@@ -28,19 +28,37 @@ Pull the latest `microcosm` image from DockerHub:
 docker pull fuzzyfrog/microcosm
 ```
 
-Create a microcosm container, bind-mounting a volume onto `/root/.ethereum`:
+Create a microcosm container, bind-mounting a volume onto `/root`:
 
 ```
-mkdir /tmp/microcosm-test
-docker run -v /tmp/microcosm-test:/root/.ethereum fuzzyfrog/microcosm <number of accounts to provision>
+MICROCOSM_DIR=$(mktemp -d)
+docker run -v $MICROCOSM_DIR:/root fuzzyfrog/microcosm <number of accounts to provision>
 ```
 
-If you look in `/tmp/microcosm-test`, you will see the `microcosm` data directory. From outside the
+If you look in `$MICROCOSM_DIR`, you will see the `microcosm` directory. This directory
+contains the `geth` data directory as a subdirectory -- `$MICROCOSM_DIR/.ethereum`.
+
+It also contains the following files:
+
+1. `genesis.json` - Genesis file used to initialize the `microcosm` network being run
+
+2. `init` - File denoting that the network initialization was successful
+
+3. `accounts.txt` - File listing the addresses of accounts created by `microcosm`
+
+4. `passwords.txt` - File listing the passwords corresponding to each account in `accounts.txt`
+
+The items in `$MICROCOSM_DIR` are owned by `root`. To take ownership of them, from outside the
 container, run
-
 ```
-sudo chown -R $USER:$USER /tmp/microcosm-test
+sudo chown -R $USER:$USER $MICROCOSM_DIR
 ```
 
-and you will be able to use the IPC socket `/tmp/microcosm-test/geth.ipc` as a
+Now, you will be able to use the IPC socket `$MICROCOSM_DIR/geth.ipc` as a
 [`web3`](https://github.com/ethereum/web3.js/) provider.
+
+
+For a side-by-side view of the `microcosm`-generated accounts and passwords, you can run:
+```
+pr -w 100 -m -t $MICROCOSM_DIR/accounts.txt $MICROCOSM_DIR/passwords.txt
+```
