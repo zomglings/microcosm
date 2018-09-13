@@ -52,7 +52,7 @@ else
     $LOGGER "geth configuration complete"
 
     # Prepare microcosm account and password files
-    ACCOUNTS_FILE=$MICROCOSM_DIR/users.txt
+    ACCOUNTS_FILE=$MICROCOSM_DIR/accounts.txt
     PASSWORDS_FILE=$MICROCOSM_DIR/passwords.txt
     for account in $NEW_ACCOUNTS; do
         echo "$account" >>$ACCOUNTS_FILE
