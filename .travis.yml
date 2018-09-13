@@ -11,6 +11,7 @@ env:
 script:
   - go test -v ./...
   - docker build -t ${DOCKER_IMAGE}:${TRAVIS_COMMIT} -f docker/Dockerfile .
+  - docker tag ${DOCKER_IMAGE}:${TRAVIS_COMMIT} ${DOCKER_IMAGE}:${TRAVIS_BRANCH}
 after_success:
   - docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
   - docker push ${DOCKER_IMAGE}
