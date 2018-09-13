@@ -4,7 +4,7 @@ DOCKER_IMAGE=${1:-fuzzyfrog/microcosm}
 
 echo "Pushing $DOCKER_IMAGE to Docker Hub..."
 
-echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --pasword-stdin
+docker login -u "$DOCKER_USERNAME" --pasword "$DOCKER_PASSWORD"
 
 docker push $DOCKER_IMAGE
 
