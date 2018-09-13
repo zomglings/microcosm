@@ -32,7 +32,11 @@ Create a microcosm container, bind-mounting a volume onto `/root`:
 
 ```
 MICROCOSM_DIR=$(mktemp -d)
-docker run -v $MICROCOSM_DIR:/root fuzzyfrog/microcosm <number of accounts to provision>
+docker run \
+    -e NUM_ACCOUNTS=<number of accounts to provision> \
+    -v $MICROCOSM_DIR:/root \
+    fuzzyfrog/microcosm \
+    <geth arguments>
 ```
 
 If you look in `$MICROCOSM_DIR`, you will see the `microcosm` directory. This directory
@@ -62,3 +66,17 @@ For a side-by-side view of the `microcosm`-generated accounts and passwords, you
 ```
 pr -w 100 -m -t $MICROCOSM_DIR/accounts.txt $MICROCOSM_DIR/passwords.txt
 ```
+
+## geth arguments
+
+As indicated above, you can directly pass in arguments for `geth` when you run the `microcosm`
+docker container. For example, if you want to expose the management APIs over the JSON RPC
+interface, you can run:
+```
+docker run -p 8545:8545 -e NUM_ACCOUNTS=0 -v $(cat md.txt):/root \
+    docai/microcosm:test --rpc --rpcaddr 0.0.0.0 --rpcapi eth,web3
+```
+
+Note: It is important to use `--rpcaddr 0.0.0.0` because of how docker handles loopbacks within
+containers -- using the default of `127.0.0.1` means you will be unable to connect to the RPC API
+from outside the container.

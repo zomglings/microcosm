@@ -23,7 +23,7 @@ if [ ! -z $DEBUG ] ; then
     $LOGGER "Running container in DEBUG mode with command: $@"
     $@
 else
-    NUM_ACCOUNTS=${1:-11}
+    NUM_ACCOUNTS=${NUM_ACCOUNTS:-11}
 
     $LOGGER "Creating $NUM_ACCOUNTS accounts"
     # Set up keystore with accounts and create genesis file
@@ -69,5 +69,5 @@ else
     $LOGGER "unlocked accounts: $REGULAR_ACCOUNTS"
 
     $LOGGER "Starting geth"
-    geth --datadir $DATA_DIR --mine --minerthreads 1 --unlock $ACCOUNTS_STRING --password $PASSWORDS_FILE --etherbase $ETHERBASE
+    geth --datadir $DATA_DIR --mine --minerthreads 1 --unlock $ACCOUNTS_STRING --password $PASSWORDS_FILE --etherbase $ETHERBASE $@
 fi
