@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "microcosm.fullname" . }}
+  labels:
+    app: {{ include "microcosm.name" . }}
+    chart: {{ include "microcosm.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "microcosm.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "microcosm.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.microcosm.image.repository }}:{{ .Values.microcosm.image.tag }}"
+          imagePullPolicy: {{ .Values.microcosm.image.pullPolicy }}
+          args:
+          {{- range .Values.microcosm.gethArgs }}
+          - {{ . }}
+          {{- end }}
+          volumeMounts:
+          - mountPath: "/root"
+            name: microcosm
+          ports:
+            - containerPort: 8545
+              protocol: TCP
+              name: jsonrpc
+            - containerPort: 30303
+              protocol: TCP
+              name: peers
+            - containerPort: 30301
+              protocol: UDP
+              name: discovery
+          livenessProbe:
+            httpGet:
+              path: /
+              port: jsonrpc
+          readinessProbe:
+            httpGet:
+              path: /
+              port: jsonrpc
+      volumes:
+        - name: microcosm
+          persistentVolumeClaim:
+            claimName: {{ include "microcosm.fullname" . }}
