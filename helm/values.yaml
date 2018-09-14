@@ -1,0 +1,13 @@
+# Default values for microcosm.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+microcosm:
+  gethArgs: ["--rpc", "--rpcaddr", "0.0.0.0", "--rpcapi", "eth,web3,net,admin,personal"]
+  numAccounts: 11
+  image:
+    repository: fuzzyfrog/microcosm
+    tag: v0.1.0
+    pullPolicy: IfNotPresent
+  storageCapacity: 100Gi
+  storageClassName: standard
+  serviceType: ClusterIP
