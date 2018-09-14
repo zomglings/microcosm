@@ -67,16 +67,31 @@ For a side-by-side view of the `microcosm`-generated accounts and passwords, you
 pr -w 100 -m -t $MICROCOSM_DIR/accounts.txt $MICROCOSM_DIR/passwords.txt
 ```
 
+
 ## geth arguments
 
 As indicated above, you can directly pass in arguments for `geth` when you run the `microcosm`
 docker container. For example, if you want to expose the management APIs over the JSON RPC
 interface, you can run:
 ```
-docker run -p 8545:8545 -e NUM_ACCOUNTS=0 -v $(cat md.txt):/root \
-    docai/microcosm:test --rpc --rpcaddr 0.0.0.0 --rpcapi eth,web3
+docker run -p 8545:8545 -e NUM_ACCOUNTS=0 -v $MICROCOSM_DIR:/root \
+    fuzzyfrog/microcosm:test --rpc --rpcaddr 0.0.0.0 --rpcapi eth,web3
 ```
 
 Note: It is important to use `--rpcaddr 0.0.0.0` because of how docker handles loopbacks within
 containers -- using the default of `127.0.0.1` means you will be unable to connect to the RPC API
 from outside the container.
+
+
+## Deploying microcosm to a kubernetes cluster using Helm
+
+This repository also provides a [helm](https://helm.sh/) chart that you can use to deploy
+`microcosm` to a kubernetes cluster.
+
+If you are already set up with `helm`, getting microcosm running is a simple as:
+```
+helm install ./helm/
+```
+(from this repository's root directory).
+
+To get up and running with `helm`, follow the instructions [here](https://github.com/helm/helm).
