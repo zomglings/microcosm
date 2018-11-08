@@ -23,13 +23,16 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.microcosm.image.repository }}:{{ .Values.microcosm.image.tag }}"
           imagePullPolicy: {{ .Values.microcosm.image.pullPolicy }}
+          env:
+            - name: NUM_ACCOUNTS
+              value: "{{ .Values.microcosm.numAccounts }}"
           args:
           {{- range .Values.microcosm.gethArgs }}
-          - {{ . }}
+            - {{ . }}
           {{- end }}
           volumeMounts:
-          - mountPath: "/root"
-            name: microcosm
+           - mountPath: "/root"
+             name: microcosm
           ports:
             - containerPort: 8545
               protocol: TCP
@@ -48,13 +51,9 @@ spec:
             httpGet:
               path: /
               port: jsonrpc
-      volumes:
-        - name: microcosm
-          persistentVolumeClaim:
-            claimName: {{ include "microcosm.fullname" . }}
   volumeClaimTemplates:
     - metadata:
-        name: {{ include "microcosm.fullname" . }}
+        name: microcosm
         labels:
           app: {{ include "microcosm.name" . }}
           chart: {{ include "microcosm.chart" . }}
