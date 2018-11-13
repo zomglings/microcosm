@@ -25,7 +25,7 @@ The only requirement is [Docker](https://www.docker.com/get-docker).
 Pull the latest `microcosm` image from DockerHub:
 
 ```
-docker pull fuzzyfrog/microcosm
+docker pull fuzzyfrog/microcosm:v0.1.0
 ```
 
 Create a microcosm container, bind-mounting a volume onto `/root`:
@@ -35,7 +35,7 @@ MICROCOSM_DIR=$(mktemp -d)
 docker run \
     -e NUM_ACCOUNTS=<number of accounts to provision> \
     -v $MICROCOSM_DIR:/root \
-    fuzzyfrog/microcosm \
+    fuzzyfrog/microcosm:v0.1.0 \
     <geth arguments>
 ```
 
@@ -88,6 +88,9 @@ from outside the container.
 This repository also provides a [helm](https://helm.sh/) chart that you can use to deploy
 `microcosm` to a kubernetes cluster.
 
+This creates a `StatefulSet` resource provisioned with a 100 GB persistent disk in the standard
+storage class.
+
 If you are already set up with `helm`, getting microcosm running is a simple as:
 ```
 helm install ./helm/
@@ -95,3 +98,15 @@ helm install ./helm/
 (from this repository's root directory).
 
 To get up and running with `helm`, follow the instructions [here](https://github.com/helm/helm).
+
+### Modifying storage
+
+You can deploy a custom storage class to your kubernetes cluster following these
+[instructions](https://kubernetes.io/docs/concepts/storage/storage-classes/).
+
+You can modify the size of your microcosm volume in your custom `values.yaml` file.
+
+### Caveats
+
+1. If you do not set `--networkid` in your geth args, state will not persist between pod restarts.
+See the [`helm/values.yaml`](./helm/values.yaml) for an example.
