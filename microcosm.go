@@ -95,15 +95,6 @@ func main() {
 		genesisFlags.Parse(subcommandArgs)
 		var rawAddresses []string
 		rawAddresses = genesisFlags.Args()
-		// If addresses have not been provided directly, check to see if they are being piped in
-		if len(rawAddresses) == 0 {
-			reader := bufio.NewReader(os.Stdin)
-			pipeInput, err := reader.ReadString('\n')
-			if err != nil && err != io.EOF {
-				log.Fatal(err)
-			}
-			rawAddresses = strings.Fields(pipeInput)
-		}
 
 		addresses := make([]common.Address, len(rawAddresses))
 		for i := 0; i < len(rawAddresses); i++ {
