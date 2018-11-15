@@ -23,7 +23,9 @@ if [ ! -z $DEBUG ] ; then
     $LOGGER "Running container in DEBUG mode with command: $@"
     $@
 else
+    DIFFICULTY=${DIFFICULTY:-""}
     NUM_ACCOUNTS=${NUM_ACCOUNTS:-11}
+    NETWORK_ID=${NETWORK_ID:-7001337}
 
     $LOGGER "Creating $NUM_ACCOUNTS accounts"
     # Set up keystore with accounts and create genesis file
@@ -39,7 +41,21 @@ else
 
     if [ ! -f $GENESIS_FILE ]; then
         $LOGGER "Creating genesis file"
-        microcosm genesis -genesisFile $GENESIS_FILE $NEW_ACCOUNTS 1>/dev/null
+
+        CHAIN_ID_ARGUMENT=""
+        if [ ! -z $NETWORK_ID ]; then
+            echo "    Setting chain ID: $NETWORK_ID"
+            CHAIN_ID_ARGUMENT="-chainID $NETWORK_ID"
+        fi
+
+        DIFFICULTY_ARGUMENT=""
+        if [ ! -z $DIFFICULTY ]; then
+            echo "    Setting difficulty: $DIFFICULTY"
+            DIFFICULTY_ARGUMENT="-difficulty $DIFFICULTY"
+        fi
+
+        microcosm genesis $CHAIN_ID_ARGUMENT $DIFFICULTY_ARGUMENT \
+            -genesisFile $GENESIS_FILE $NEW_ACCOUNTS 1>/dev/null
     fi
 
     if [ ! -f $INITIALIZATION_FILE ] ; then
@@ -69,5 +85,12 @@ else
     $LOGGER "unlocked accounts: $REGULAR_ACCOUNTS"
 
     $LOGGER "Starting geth"
-    geth --datadir $DATA_DIR --mine --minerthreads 1 --unlock $ACCOUNTS_STRING --password $PASSWORDS_FILE --etherbase $ETHERBASE $@
+    geth --datadir $DATA_DIR \
+        --networkid $NETWORK_ID \
+        --mine \
+        --minerthreads 1 \
+        --unlock $ACCOUNTS_STRING \
+        --password $PASSWORDS_FILE \
+        --etherbase $ETHERBASE \
+        $@
 fi
