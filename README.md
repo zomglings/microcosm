@@ -25,7 +25,7 @@ The only requirement is [Docker](https://www.docker.com/get-docker).
 Pull the latest `microcosm` image from DockerHub:
 
 ```
-docker pull fuzzyfrog/microcosm:v0.1.0
+docker pull fuzzyfrog/microcosm
 ```
 
 Create a microcosm container, bind-mounting a volume onto `/root`:
@@ -35,7 +35,7 @@ MICROCOSM_DIR=$(mktemp -d)
 docker run \
     -e NUM_ACCOUNTS=<number of accounts to provision> \
     -v $MICROCOSM_DIR:/root \
-    fuzzyfrog/microcosm:v0.1.0 \
+    fuzzyfrog/microcosm \
     <geth arguments>
 ```
 
@@ -74,8 +74,8 @@ As indicated above, you can directly pass in arguments for `geth` when you run t
 docker container. For example, if you want to expose the management APIs over the JSON RPC
 interface, you can run:
 ```
-docker run -p 8545:8545 -e NUM_ACCOUNTS=0 -v $MICROCOSM_DIR:/root \
-    fuzzyfrog/microcosm:test --rpc --rpcaddr 0.0.0.0 --rpcapi eth,web3
+docker run -p 8545:8545 -e NUM_ACCOUNTS=1 -v $MICROCOSM_DIR:/root \
+    fuzzyfrog/microcosm --rpc --rpcaddr 0.0.0.0 --rpcapi eth,web3
 ```
 
 Note: It is important to use `--rpcaddr 0.0.0.0` because of how docker handles loopbacks within
@@ -108,5 +108,6 @@ You can modify the size of your microcosm volume in your custom `values.yaml` fi
 
 ### Caveats
 
-1. If you do not set `--networkid` in your geth args, state will not persist between pod restarts.
-See the [`helm/values.yaml`](./helm/values.yaml) for an example.
+1. If you do not set `--networkid` in your values file, state will not persist between pod restarts.
+This is done via the `microcosm.networkId` parameter. See the
+[`helm/values.yaml`](./helm/values.yaml) for an example.

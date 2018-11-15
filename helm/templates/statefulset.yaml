@@ -26,6 +26,10 @@ spec:
           env:
             - name: NUM_ACCOUNTS
               value: "{{ .Values.microcosm.numAccounts }}"
+            - name: NETWORK_ID
+              value: "{{ .Values.microcosm.networkId }}"
+            - name: DIFFICULTY
+              value: "{{ .Values.microcosm.difficulty }}"
           args:
           {{- range .Values.microcosm.gethArgs }}
             - {{ . }}

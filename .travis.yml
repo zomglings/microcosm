@@ -10,10 +10,9 @@ env:
     - DOCKER_IMAGE="fuzzyfrog/microcosm"
 script:
   - go test -v ./...
-  - docker build -t ${DOCKER_IMAGE}:${TRAVIS_COMMIT} -f docker/Dockerfile .
-  - docker tag ${DOCKER_IMAGE}:${TRAVIS_COMMIT} ${DOCKER_IMAGE}:${TRAVIS_BRANCH}
+  - docker build -t ${DOCKER_IMAGE}:latest -t ${DOCKER_IMAGE}:${TRAVIS_COMMIT} -t ${DOCKER_IMAGE}:${TRAVIS_BRANCH} -f docker/Dockerfile .
 deploy:
   provider: script
-  script: sh scripts/docker-push.sh ${DOCKER_IMAGE}:${TRAVIS_BRANCH}
+  script: sh scripts/docker-push.sh ${DOCKER_IMAGE}
   on:
     tags: true
