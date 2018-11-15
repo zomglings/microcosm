@@ -2,8 +2,8 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 microcosm:
-  gethArgs: ["--rpc", "--rpcaddr", "0.0.0.0", "--rpcapi", "eth,web3,net,admin,personal"]
-  numAccounts: 11
+  gethArgs: ["--networkid", "\"7001337\"", "--rpc", "--rpcaddr", "0.0.0.0", "--rpcapi", "eth,web3,net,admin,personal", "--ws", "--wsaddr", "0.0.0.0", "--wsapi", "eth,web3,personal"]
+  numAccounts: 1
   image:
     repository: fuzzyfrog/microcosm
     tag: v0.1.0

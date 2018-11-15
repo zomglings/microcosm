@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "microcosm.fullname" . }}
   labels:
@@ -23,13 +23,16 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.microcosm.image.repository }}:{{ .Values.microcosm.image.tag }}"
           imagePullPolicy: {{ .Values.microcosm.image.pullPolicy }}
+          env:
+            - name: NUM_ACCOUNTS
+              value: "{{ .Values.microcosm.numAccounts }}"
           args:
           {{- range .Values.microcosm.gethArgs }}
-          - {{ . }}
+            - {{ . }}
           {{- end }}
           volumeMounts:
-          - mountPath: "/root"
-            name: microcosm
+           - mountPath: "/root"
+             name: microcosm
           ports:
             - containerPort: 8545
               protocol: TCP
@@ -48,7 +51,19 @@ spec:
             httpGet:
               path: /
               port: jsonrpc
-      volumes:
-        - name: microcosm
-          persistentVolumeClaim:
-            claimName: {{ include "microcosm.fullname" . }}
+  volumeClaimTemplates:
+    - metadata:
+        name: microcosm
+        labels:
+          app: {{ include "microcosm.name" . }}
+          chart: {{ include "microcosm.chart" . }}
+          release: {{ .Release.Name }}
+          heritage: {{ .Release.Service }}
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        - ReadOnlyMany
+        resources:
+          requests:
+            storage: {{ .Values.microcosm.storageCapacity }}
+        storageClassName: {{ .Values.microcosm.storageClassName }}

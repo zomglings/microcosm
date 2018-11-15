@@ -22,3 +22,6 @@ spec:
   - protocol: TCP
     port: 8545
     name: jsonrpc
+  - protocol: TCP
+    port: 8546
+    name: ws
